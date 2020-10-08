@@ -1,0 +1,56 @@
+---
+givenName: "Matt"
+surName: "Grainger"
+Email: "matthew.grainger@nina.no"
+OrcId: "0000-0001-8426-6495"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(here)
+library(LivingNorwayR)
+t<-get_project_title()
+```
+
+---
+title: '`r paste0('Title:  ', t)`'
+---
+
+
+```{r}
+rdMarkMeta=read_metadata(file="Metadata.rmd")
+  
+```
+
+
+```{r}
+title=rdMarkMeta$title
+title=stringr::str_replace_all(title, "[[:punct:]]", "")
+
+givenName=rdMarkMeta$givenName
+givenName=stringr::str_replace_all(givenName, "[[:punct:]]", "")
+
+surName=rdMarkMeta$surName
+surName=stringr::str_replace_all(surName, "[[:punct:]]", "")
+
+email=rdMarkMeta$Email
+email=stringr::str_replace_all(email, "\\\"", "")
+
+orcid=rdMarkMeta$OrcId
+surName=stringr::str_replace_all(orcid, "[[:punct:]]", "")
+
+```
+
+
+```{r}
+
+eml<-list(dataset=list(title=title,
+                       creator=list(givenName=givenName, surName=surName, electronicMailAddress=email, userID=orcid)),
+                        system = "doi",
+                       packageId = "10.xxx")
+
+eml
+```
+
