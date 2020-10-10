@@ -186,7 +186,318 @@ https://github.com/LivingNorway/LivingNorwayR
 
 ## Toolchain walkthrough
 
-### Go out and get some data
+We will import this data and use it to demonstrate some of the workflow
+
+Nilsen E B, Pedersen H C, Brøseth H, Moa P F, Vang R (2019). Rock ptarmigan (Lagopus muta) radio telemetry in Lierne, Norway. Version 1.2. Norwegian Institute for Nature Research. Occurrence dataset https://doi.org/10.15468/o4zcd3 accessed via GBIF.org on 2020-10-10.
+https://www.gbif.org/dataset/b848f1f3-3955-4725-8ad8-e711e4a9e0ac#
+
+![](assets/img/37755781.jpg)
+
+--- .class #id
+
+## Set up the "Living Norway data package" structure
+
+```{r, eval=FALSE}
+library(LivingNorwayR)
+build_folder_structure(project_name = "Tetraonidae_Lagopus")
+map_folders(project_name = "Tetraonidae_Lagopus")
+#map_files(project_name = "Tetraonidae_Lagopus")
+
+```
+
+
+
+```{r, echo=FALSE, warning=FALSE,cache=FALSE,results='asis'}
+cat('<iframe src="./assets/widgets/plot.html" width=100% height=100% allowtransparency="true"> </iframe>')
+```
+
+--- .class #id
+
+## Import the data and map to DwCObject 
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+
+library(R6)
+library(magrittr)
+library(leaflet)
+#Testing and playing with R6 Class
+
+DwCOccurence<-R6::R6Class("DwCOccurence",
+                          list(id= NULL,
+                               ownerInstitutionCode= NULL,
+                               basisOfRecord= NULL,
+                               dynamicProperties= NULL,
+                               occurrenceID= NULL,
+                               sex= NULL,
+                               lifeStage= NULL,
+                               organismID= NULL,
+                               organismName= NULL,
+                               eventDate= NULL,
+                               eventTime= NULL,
+                               country= NULL,
+                               countryCode = NULL,
+                               locality         = NULL,
+                               decimalLatitude= NULL,
+                               decimalLongitude= NULL,
+                               geodeticDatum= NULL,
+                               coordinateUncertaintyInMeters= NULL,
+                               taxonID= NULL,
+                               scientificName= NULL,
+                               kingdom= NULL,
+                               phylum= NULL,
+                               class= NULL,
+                               order= NULL,
+                               family= NULL,
+                               genus= NULL,
+                               initialize = function(id,ownerInstitutionCode,basisOfRecord,
+                                                     dynamicProperties,
+                                                     occurrenceID,
+                                                     sex,
+                                                     lifeStage,
+                                                     organismID,
+                                                     organismName,
+                                                     eventDate,
+                                                     eventTime,
+                                                     country,
+                                                     countryCode ,
+                                                     locality         ,
+                                                     decimalLatitude,
+                                                     decimalLongitude,
+                                                     geodeticDatum,
+                                                     coordinateUncertaintyInMeters,
+                                                     taxonID,
+                                                     scientificName,
+                                                     kingdom,
+                                                     phylum,
+                                                     class,
+                                                     order,
+                                                     family,
+                                                     genus,...){
+                                 self$id<-id
+                                 self$ownerInstitutionCode<-ownerInstitutionCode
+                                 self$basisOfRecord<-basisOfRecord
+                                 self$dynamicProperties<-dynamicProperties
+                                 self$occurrenceID<-occurrenceID
+                                 self$sex<-sex
+                                 self$lifeStage<-lifeStage
+                                 self$organismID<-organismID
+                                 self$organismName<-organismName
+                                 self$eventDate<-eventDate
+                                 self$eventTime<-eventTime
+                                 self$country<-country
+                                 self$countryCode <-countryCode
+                                 self$locality         <-  locality
+                                 self$decimalLatitude<-decimalLatitude
+                                 self$decimalLongitude<-decimalLongitude
+                                 self$geodeticDatum<-  geodeticDatum
+                                 self$coordinateUncertaintyInMeters<-coordinateUncertaintyInMeters
+                                 self$taxonID<-taxonID
+                                 self$scientificName<-scientificName
+                                 self$kingdom<-kingdom
+                                 self$phylum<-phylum
+                                 self$class<-class
+                                 self$order<-order
+                                 self$family<- family
+                                 self$genus<-genus
+                                 self$object()
+                               },
+                               object=function(...){
+                                 object<-data.frame(id=id,
+                                                    ownerInstitutionCode=
+                                                      ownerInstitutionCode,
+                                                    basisofRecord=self$basisOfRecord,
+                                                    dynamicProperties=self$dynamicProperties,
+                                                    occurrenceID= self$occurrenceID,
+                                                    sex= self$sex,
+                                                    lifeStage= self$lifeStage,
+                                                    organismID= self$organismID,
+                                                    organismName= self$organismName,
+                                                    eventDate= self$eventDate,
+                                                    eventTime= self$eventTime,
+                                                    country= self$country,
+                                                    countryCode= self$countryCode,
+                                                    locality= self$locality,
+                                                    decimalLatitude= self$decimalLatitude,
+                                                    decimalLongitude= self$decimalLongitude,
+                                                    geodeticDatum= self$geodeticDatum,
+                                                    coordinateUncertaintyInMeters= self$coordinateUncertaintyInMeters,
+                                                    taxonID= self$taxonID,
+                                                    scientificName= self$scientificName,
+                                                    kingdom= self$kingdom,
+                                                    phylum= self$phylum,
+                                                    class= self$class,
+                                                    order= self$order,
+                                                    family= self$family,
+                                                    genus= self$genus
+                                 )},
+                               get_bounding_box=function(...){
+                                 minX=min(self$decimalLongitude)
+                                 maxX=max(self$decimalLongitude)
+                                 minY=min(self$decimalLatitude)
+                                 maxY=max(self$decimalLatitude)
+                                 print(c(
+                                   "minX"=minX,
+                                   "maxX"=maxX,
+                                   "minY"=minY,
+                                   "maxY"=maxY))
+                                 
+                               },
+                               plotmap=function(...){
+                                 df=data.frame(id=id,
+                                               occurrenceID= self$occurrenceID,
+                                               sex= self$sex,
+                                               lifeStage= self$lifeStage,
+                                               organismID= self$organismID,
+                                               organismName= self$organismName,
+                                               eventDate= self$eventDate,
+                                               eventTime= self$eventTime,
+                                               decimalLatitude= self$decimalLatitude,
+                                               decimalLongitude= self$decimalLongitude,
+                                               geodeticDatum= self$geodeticDatum,
+                                               coordinateUncertaintyInMeters= self$coordinateUncertaintyInMeters)
+                                 #coords=c(as.numeric(df$decimalLongitude), as.numeric(df$decimalLatitude))
+                                 #print(df)
+                                 #my.sf.point <- sf::st_as_sf(x = df, coords = c(decimalLongitude, decimalLatitude),
+                                 #                           crs = "+proj=longlat +datum=WGS84")
+                                 #print(my.sf.point)
+                                 leaflet::leaflet() %>% addTiles() %>% addMarkers(lng=df$decimalLongitude,
+                                                                                  lat=df$decimalLatitude, popup = paste0(
+                                                                                    "<b>Sex: </b>"
+                                                                                    ,df$sex
+                                                                                    
+                                                                                    ,"<b>  eventDate: </b>"
+                                                                                    ,df$eventDate
+                                                                                  ))
+                                 
+                               }))
+```
+
+```{r, echo=FALSE}
+occurrence <- read.delim("C:/Users/matthew.grainger/Documents/Projects_in_development/LNC2020_presentation/slides/Tetraonidae_Lagopus/data/derived/occurrence.txt")
+
+Rock<-DwCOccurence$new(
+  id<-occurrence$id,
+  ownerInstitutionCode<-occurrence$ownerInstitutionCode,
+  basisOfRecord<-occurrence$basisOfRecord,
+  dynamicProperties<-occurrence$dynamicProperties,
+  occurrenceID<-occurrence$occurrenceID,
+  sex<-occurrence$sex,
+  lifeStage<-occurrence$lifeStage,
+  organismID<-occurrence$organismID,
+  organismName<-occurrence$organismName,
+  eventDate<-occurrence$eventDate,
+  eventTime<-occurrence$eventTime,
+  country<-occurrence$country,
+  countryCode<-occurrence$countryCode ,
+  locality<-occurrence$locality         ,
+  decimalLatitude<-occurrence$decimalLatitude,
+  decimalLongitude<-occurrence$decimalLongitude,
+  geodeticDatum<-occurrence$geodeticDatum,
+  coordinateUncertaintyInMeters<-occurrence$coordinateUncertaintyInMeters,
+  taxonID<-occurrence$taxonID,
+  scientificName<-occurrence$scientificName,
+  kingdom<-occurrence$kingdom,
+  phylum<-occurrence$phylum,
+  class<-occurrence$class,
+  order<-occurrence$order,
+  family<-occurrence$family,
+  genus<-occurrence$genus)
+```
+
+```{r, echo=TRUE, eval=FALSE}
+Rock<-DwCOccurence$new(
+  id<-occurrence$id,
+  ownerInstitutionCode<-occurrence$ownerInstitutionCode,
+  basisOfRecord<-occurrence$basisOfRecord,
+  dynamicProperties<-occurrence$dynamicProperties,
+  occurrenceID<-occurrence$occurrenceID,
+  sex<-occurrence$sex,
+  lifeStage<-occurrence$lifeStage,
+  organismID<-occurrence$organismID,
+  organismName<-occurrence$organismName,
+  eventDate<-occurrence$eventDate,
+  ...)
+
+```
+
+--- .class #id
+
+## Helper functions
+
+```{r, eval=FALSE}
+DwCClassList$`dwc:Occurrence`$termInfo
+
+```
+
+dwc:Occurrence - Occurrence
+An existence of an Organism (sensu http://rs.tdwg.org/dwc/terms/Organism) at a particular place at a particular time.
+
+	Defined in: https://dwc.tdwg.org/
+	IRI: http://rs.tdwg.org/dwc/terms/Occurrence
+	Version IRI: http://rs.tdwg.org/dwc/terms/version/Occurrence-2020-08-20
+	Type: Class
+	Date modified: 2020-08-20
+	Executive committee decisions:
+		http://rs.tdwg.org/decisions/decision-2014-10-26_15
+	Examples:
+		A wolf pack on the shore of Kluane Lake in 1988. A virus in a plant leaf in the New York Botanical Garden at 15:29 on 2014-10-23. A fungus in Central Park in the summer of 1929.
+
+--- .class #id
+
+
+## Make use of the data 
+
+```{r, echo=TRUE}
+df<-Rock$object()
+summary(df$sex)
+summary(df$lifeStage)
+bb<-Rock$get_bounding_box()
+```
+
+--- .class #id
+
+## Produce maps 
+
+```{r}
+Map<-Rock$plotmap()
+Map
+```
+
+--- .class #id
+
+## Explore the metadata
+
+>Early stage of development
+
+```{r, echo=FALSE}
+DwCMetaData=R6::R6Class("DwCMetaData", 
+                        list(
+                          eml=NULL,
+                             initialize = function(eml){
+                               self$eml<-eml},
+                          get_eml=function(...){
+                           XML::xmlParse(self$eml)
+                            #print(x)
+                            #listXML<-xmlToList(x)
+                            #listXML$dataset$abstract$para
+                    }))
+
+
+```
+
+
+```{r}
+RockXML<-("C:/Users/matthew.grainger/Documents/Projects_in_development/LNC2020_presentation/slides/Tetraonidae_Lagopus/metadata/eml.xml")
+
+metadata<-DwCMetaData$new(RockXML)
+metadata$get_eml()
+
+```
+
+--- .class #id
+
+## Do some analysis
+
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, include=FALSE}
 
@@ -226,65 +537,6 @@ d<-as.data.frame(d)
 
 ```
 
-![copyright ebird](assets/img/37755781.jpg)
-
---- .class #id
-
-### Set up the "Living Norway data package" structure
-
-```{r, eval=FALSE}
-build_folder_structure(project_name = "Tetraonidae_Lagopus")
-
-```
-
-```{r, echo=FALSE}
-# project_name="Tetraonidae_Lagopus"
-# path<-paste0(getwd(),"/", project_name)
-# dirslist<-list.dirs(path,recursive = TRUE, full.names = TRUE)
-# x <- lapply(strsplit(dirslist, "/"), function(z) as.data.frame(t(z)))
-# LivingNorway_project <- plyr::rbind.fill(x)
-# y=dim(LivingNorway_project)[2]
-# p <- collapsibleTree::collapsibleTree( LivingNorway_project, c(names(LivingNorway_project)[y-1], names(LivingNorway_project)[y]))
-# htmlwidgets::saveWidget(p, file = "plot.html")
-```
-
-```{r, 'collapsibleTree', echo=FALSE, warning=FALSE,cache=FALSE,results='asis'}
-cat('<iframe src="./assets/widgets/plot.html" width=100% height=100% allowtransparency="true"> </iframe>')
-```
-
---- .class #id
-
-### "Map" your raw data to Darwin Core Terms (use the functions provided to get the metadata) and produce a DwC-a
-
-
-```{r get_geographic_extent}
-out<-LivingNorwayR::get_geographic_extent(d, lon = "decimalLongitude", lat= "decimalLatitude", 
-                                     add_map = "yes")
-out[[1]]
-
-```
-
---- .class #id
-
-### Use your DWCa to perform and write-up your analysis
-
-#### Make a map
-
-```{r, echo=FALSE}
-out<-LivingNorwayR::get_geographic_extent(d, lon = "decimalLongitude", lat= "decimalLatitude", 
-                                     add_map = "yes")
-#out[[2]]
-
-```
-
-```{r, 'leaflet1', echo=FALSE, warning=FALSE,cache=FALSE,results='asis'}
-cat('<iframe src="./assets/widgets/map.html" width=100% height=100% allowtransparency="true"> </iframe>')
-```
-
-
---- .class #id
-
-#### Run an analysis
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 source("C:/Users/matthew.grainger/Documents/Projects_in_development/LNC2020_presentation/Rock_ptarmigan_example/cause_survival_GROUSE.r")
@@ -523,7 +775,7 @@ d_max_each <- d %>% filter(state=="alive") %>%
 --- .class #id
 
 
-#### Make a plot
+## Make a plot
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, eval=FALSE}
 
@@ -545,13 +797,13 @@ ggsave(file = "ggsurv.png", print(plotS$plot))
 
 --- .class #id
 
-### Write it up
+## Write it up
 
-##### Results
+### Results
 
 Out of `r length(unique(d$organismName))` radio marked rock ptarmigans, `r Deaths[1,2]` were shot by hunters in the study area, and `r Deaths[2,2]` were recorded as dead due to other causes (mostly predation). 
 
-##### Results (under the covers)
+### Results (under the covers)
 
 Out of ``r "\u0060r length(unique(d$organismName))\u0060"`` radio marked rock ptarmigans, ``r "\u0060r  Deaths[1,2]\u0060"`` were shot by hunters in the study area, and ``r "\u0060r Deaths[2,2]\u0060"`` were recorded as dead due to other causes (mostly predation). 
 

@@ -34,3 +34,5 @@ raster
 cowplot
 LivingNorwayR
 leaflet
+R6
+magrittr
