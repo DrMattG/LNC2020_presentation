@@ -67,10 +67,11 @@ Culina et al. (2020) PLoS Biol 18(7): e3000763. (n=346)
 ```{r, message=FALSE, warning=FALSE, echo=FALSE}
 library(tidyverse)
 library(see)
+library(XML)
 Dryad<-read.csv("C:/Users/matthew.grainger/Documents/Projects_in_development/LNC2020_presentation/data/Dryad_data_2012_2013.csv", h=TRUE)
 levels(Dryad$journal)<-c("Biology Letters","Evolution", "Evo Applications", "J of Evo Biology", "Nature", "Science","Am Naturalist")    
 Dryad %>% 
-  select(complScore, reuseScore, journal, year) %>% 
+  dplyr::select(complScore, reuseScore, journal, year) %>% 
   ggplot(aes(x=complScore, y=journal, fill=journal))+
   ggridges::geom_density_ridges()+
   labs(x="Completeness score \n (1= Poor, 2= large omission, 3= small omission, 4= Good, 5 = Exemplary)", y="")+
@@ -94,7 +95,7 @@ Dryad %>%
 ```{r, message=FALSE, warning=FALSE, echo=FALSE}
 
 Dryad %>% 
-  select(complScore, reuseScore, journal, year) %>% 
+  dplyr::select(complScore, reuseScore, journal, year) %>% 
   ggplot(aes(x=reuseScore, y=journal, fill=journal))+
   ggridges::geom_density_ridges()+
   labs(x="Reuse score \n (1= Very poor, 2= poor, 3= average, 4= Good, 5 = Exemplary)", y="")+
@@ -170,7 +171,7 @@ cat('<iframe src="C:/Users/matthew.grainger/Documents/Projects_in_development/LN
 
 --- .class #id 
 
-## Introducing LivingNorwayR
+## Introducing {LivingNorwayR}
 
 https://github.com/LivingNorway/LivingNorwayR
 
@@ -178,7 +179,7 @@ https://github.com/LivingNorway/LivingNorwayR
 - Main features 
   - Import & Export Darwin Core Archive
   - Mapping data (with reduced pain) to DWC terms
-  - Metadata extraction functions
+  - Metadata extraction/writing functions
   - Plotting functions
   - Modelling functions 
 
@@ -467,37 +468,46 @@ Map
 
 ## Explore the metadata
 
->Early stage of development
+**Early stage of development**
 
 ```{r, echo=FALSE}
 DwCMetaData=R6::R6Class("DwCMetaData", 
                         list(
                           eml=NULL,
-                             initialize = function(eml){
-                               self$eml<-eml},
+                          initialize = function(eml){
+                            self$eml<-eml},
                           get_eml=function(...){
-                           XML::xmlParse(self$eml)
+                            XML::xmlParse(self$eml)
                             #print(x)
                             #listXML<-xmlToList(x)
                             #listXML$dataset$abstract$para
-                    }))
+                          },
+                          get_abstract=function(pathtoxml){
+                            require(XML)
+                            xmlfile=xmlParse(pathtoxml)
+                            xmltop = xmlRoot(xmlfile) 
+                            xmltop[['dataset']][['abstract']]
+                          }))
+
 
 
 ```
 
 
 ```{r}
+
 RockXML<-("C:/Users/matthew.grainger/Documents/Projects_in_development/LNC2020_presentation/slides/Tetraonidae_Lagopus/metadata/eml.xml")
 
 metadata<-DwCMetaData$new(RockXML)
-metadata$get_eml()
+#metadata$get_eml()
+metadata$get_abstract(RockXML)
 
 ```
 
 --- .class #id
 
 ## Do some analysis
-
+**Early stage of development**
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, include=FALSE}
 
@@ -536,6 +546,13 @@ d <- d %>%
 d<-as.data.frame(d)
 
 ```
+
+
+```{r, eval =FALSE}
+DwCOccurence$run_survival()
+
+```
+
 
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
@@ -775,7 +792,7 @@ d_max_each <- d %>% filter(state=="alive") %>%
 --- .class #id
 
 
-## Make a plot
+### Then add a plot
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, eval=FALSE}
 
@@ -809,9 +826,9 @@ Out of ``r "\u0060r length(unique(d$organismName))\u0060"`` radio marked rock pt
 
 --- .class #id
 
-## Conclusions
+## {LivingNorwayR}
 
-- LivingNorwayR is still in development
+- {LivingNorwayR} is still in development
   - Please let us know what functionality you need
     - Github issues: https://github.com/LivingNorway/LivingNorwayR/issues
     - Slack: Joseph Chipperfield, Matt Grainger, Erlend Nilsen
