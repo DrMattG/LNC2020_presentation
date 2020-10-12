@@ -119,18 +119,21 @@ https://github.com/LivingNorway/LivingNorwayR
 
 ## Toolchain walkthrough
 
+![](assets/img/RockPtarmigan.jpg.png)
+
+--- .class #id
+
+## Dataset
+
 We will import this data and use it to demonstrate some of the workflow
 
-Nilsen E B, Pedersen H C, Brøseth H, Moa P F, Vang R (2019). Rock ptarmigan (Lagopus muta) radio telemetry in Lierne, Norway. Version 1.2. Norwegian Institute for Nature Research. Occurrence dataset https://doi.org/10.15468/o4zcd3 accessed via GBIF.org on 2020-10-10.
-https://www.gbif.org/dataset/b848f1f3-3955-4725-8ad8-e711e4a9e0ac#
+Nilsen E B, Pedersen H C, Brøseth H, Moa P F, Vang R (2019). Rock ptarmigan (Lagopus muta) radio telemetry in Lierne, Norway. Version 1.2. Norwegian Institute for Nature Research. Occurrence dataset https://doi.org/10.15468/o4zcd3 accessed via GBIF.org on 2020-10-10. https://www.gbif.org/dataset/b848f1f3-3955-4725-8ad8-e711e4a9e0ac#
 
 Paper: https://doi.org/10.3389/fevo.2020.00034
 
 Code: https://osf.io/qwb6u
 
-![](assets/img/37755781.jpg)
-
---- .class #id
+--- class. #id
 
 ## Set up the "Living Norway data package" structure
 
