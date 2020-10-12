@@ -31,6 +31,14 @@ $(function() {
 });
 </script>
 
+<style type='text/css'>
+.eightyfive {
+   font-size: 85%;
+   }
+</style>
+
+
+   
 ## Schematic of current workflow
  
 ![](assets/img/Workflow1.png)
@@ -116,6 +124,10 @@ We will import this data and use it to demonstrate some of the workflow
 Nilsen E B, Pedersen H C, Brøseth H, Moa P F, Vang R (2019). Rock ptarmigan (Lagopus muta) radio telemetry in Lierne, Norway. Version 1.2. Norwegian Institute for Nature Research. Occurrence dataset https://doi.org/10.15468/o4zcd3 accessed via GBIF.org on 2020-10-10.
 https://www.gbif.org/dataset/b848f1f3-3955-4725-8ad8-e711e4a9e0ac#
 
+Paper: https://doi.org/10.3389/fevo.2020.00034
+
+Code: https://osf.io/qwb6u
+
 ![](assets/img/37755781.jpg)
 
 --- .class #id
@@ -159,7 +171,7 @@ Rock<-DwCOccurence$new(
 ```
 
 --- .class #id
-
+   
 ## Helper functions
 
 
@@ -180,7 +192,7 @@ An existence of an Organism (sensu http://rs.tdwg.org/dwc/terms/Organism) at a p
 	Examples:
 		A wolf pack on the shore of Kluane Lake in 1988. A virus in a plant leaf in the New York Botanical Garden at 15:29 on 2014-10-23. A fungus in Central Park in the summer of 1929.
 
---- .class #id
+--- .eightyfive #id
 
 
 ## Make use of the data 
@@ -228,6 +240,8 @@ Map
 
 --- .class #id
 
+
+   
 ## Explore the metadata
 
 **Early stage of development**
@@ -262,7 +276,7 @@ metadata$get_abstract(RockXML)
 
 
 ```r
-DwCOccurence$run_survival()
+Rock$run_survival()
 ```
 
 

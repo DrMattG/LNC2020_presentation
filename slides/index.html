@@ -78,6 +78,12 @@ $(function() {
 });
 </script>
 
+<style type='text/css'>
+.eightyfive {
+   font-size: 85%;
+   }
+</style>
+
 <h2>Schematic of current workflow</h2>
 
 <p><img src="assets/img/Workflow1.png" alt=""></p>
@@ -234,6 +240,10 @@ $(function() {
 <p>Nilsen E B, Pedersen H C, Brøseth H, Moa P F, Vang R (2019). Rock ptarmigan (Lagopus muta) radio telemetry in Lierne, Norway. Version 1.2. Norwegian Institute for Nature Research. Occurrence dataset <a href="https://doi.org/10.15468/o4zcd3">https://doi.org/10.15468/o4zcd3</a> accessed via GBIF.org on 2020-10-10.
 <a href="https://www.gbif.org/dataset/b848f1f3-3955-4725-8ad8-e711e4a9e0ac#">https://www.gbif.org/dataset/b848f1f3-3955-4725-8ad8-e711e4a9e0ac#</a></p>
 
+<p>Paper: <a href="https://doi.org/10.3389/fevo.2020.00034">https://doi.org/10.3389/fevo.2020.00034</a></p>
+
+<p>Code: <a href="https://osf.io/qwb6u">https://osf.io/qwb6u</a></p>
+
 <p><img src="assets/img/37755781.jpg" alt=""></p>
 
   </article>
@@ -316,7 +326,7 @@ Examples:
   
 </slide>
 
-<slide class="class" id="id" style="background:;">
+<slide class="eightyfive" id="id" style="background:;">
   
   <hgroup>
     <h2>Make use of the data</h2>
@@ -405,7 +415,7 @@ metadata$get_abstract(RockXML)
   <article data-timings="">
     <p><strong>Early stage of development</strong></p>
 
-<pre><code class="r">DwCOccurence$run_survival()
+<pre><code class="r">Rock$run_survival()
 </code></pre>
 
 <pre><code>## Call: survfit(formula = Surv(entry, exit, event) ~ 1, data = CH)
